@@ -48,7 +48,7 @@ public class Tasks5 {
         System.out.println("\nЗадача 10");
         System.out.println("hexLattice(1) -> " + hexLattice(1));
         System.out.println("hexLattice(7) -> " + hexLattice(7));
-        System.out.println("hexLattice(19) -> " + hexLattice(19));
+        System.out.println("hexLattice(19) -> " + hexLattice(61));
         System.out.println("hexLattice(37) -> " + hexLattice(37));
 
     }
@@ -67,13 +67,13 @@ public class Tasks5 {
 
     /** Функция дешифрует сообщения, зашифрованные функцией encrypt*/
     public static String decrypt(int[] encrypted) {
-        String decrypted = "" + (char) encrypted[0];
+        StringBuilder decrypted = new StringBuilder("" + (char) encrypted[0]);
         int prev = encrypted[0];
         for (int i = 1; i < encrypted.length; i++) {
-            decrypted += (char) (encrypted[i] + prev);
+            decrypted.append((char) (encrypted[i] + prev));
             prev = encrypted[i] + prev;
         }
-        return decrypted;
+        return decrypted.toString();
     }
 
     /** Шахматы, много шахмат */
@@ -116,8 +116,8 @@ public class Tasks5 {
     /** Функция перемножает цифры суммы всех чисел до тех пор, пока не получится однозначное число */
     public static int sumDigProd(int... numbers) {
         int sum = 0;
-        for (int i = 0; i < numbers.length; i++) {
-            sum += numbers[i];
+        for (int number : numbers) {
+            sum += number;
         }
         while (sum > 9) {
             int prod = 1;
@@ -133,12 +133,12 @@ public class Tasks5 {
     /** Вспомогательная функция, считает уникальное численное значение на основе уникальных гласных в строке */
     public static int countVowels(String word) {
         final String vowels = "aeiouy";
-        String unique = "";
+        StringBuilder unique = new StringBuilder();
         int sum = 0;
         for (char lit : word.toLowerCase().toCharArray()) {
-            if (vowels.indexOf(lit) != -1 && !unique.contains(lit + "")) {
+            if (vowels.indexOf(lit) != -1 && !unique.toString().contains(lit + "")) {
                 sum += lit;
-                unique += lit;
+                unique.append(lit);
             }
         }
         return sum;
@@ -149,9 +149,9 @@ public class Tasks5 {
         String[] result = new String[words.length];
         int resultIdx = 0;
         int baseVowels = countVowels(words[0]);
-        for (int i = 0; i < words.length; i++) {
-            if (baseVowels == countVowels(words[i])) {
-                result[resultIdx++] = words[i];
+        for (String word : words) {
+            if (baseVowels == countVowels(word)) {
+                result[resultIdx++] = word;
             }
         }
         return Arrays.copyOf(result, resultIdx);
@@ -204,7 +204,7 @@ public class Tasks5 {
         String[] digits = {"ноль", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"};
         String[] teens = {"десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
         String[] tens = {"двадцать", "тридцать", "сорок", "пятьдесят", "шестьдесят", "семьдесят", "восемьдесят", "девяносто"};
-        String[] hundreds = {"сто", "двести", "триста", "четыреста", "пятьсот", "семьсот", "восемьсот", "девятьсот"};
+        String[] hundreds = {"сто", "двести", "триста", "четыреста", "пятьсот","шестьсот", "семьсот", "восемьсот", "девятьсот"};
         StringBuilder answer = new StringBuilder();
         if (number > 99) {
             answer.append(hundreds[number / 100 - 1]).append(" ");
@@ -257,47 +257,36 @@ public class Tasks5 {
     }
 
     /** Функция для получения строки с центрированным шестиугольным числом, если это возможно */
-    public static String hexLattice(int n){
-        if(n == 1)return " o ";
+    public static String hexLattice(int n) {
+        if (n == 1) return "\no";
+        //Формула из википедии где итерация = 3 * n * (n - 1) + 1
         int num = 1;
-        int counter = 0;
-        while(num < n){
+        int counter = 1;
+        while (num < n) {
             num = 3 * counter * (counter - 1) + 1;
             counter++;
         }
-        if(num != n)return "Invalid";
-        StringBuilder answer = new StringBuilder();
-        int side  = counter - 1;
-        int mid = side * 2 + 1;
-        for(int i = 0; i < counter - 1; i++){
-            for(int j = 0; j < mid - side - 2; j++){
-                answer.append(" ");
+        // Получается что counter - число итераций, т.е размер начальной стороны = counter
+        String elem = "o";
+        String shiftElem = " o";
+        int size = counter - 1;
+        int midSize = size * 2 - 1;
+        if (num != n) return "Invalid";
+        boolean isInc = true;
+        StringBuilder answer = new StringBuilder("\n");
+        for(int i = 0; i < midSize; i++){
+            if(size == midSize){
+                isInc = false;
             }
-            for(int k = 0; k < side; k++){
-                if(k == 0)answer.append("o");
-                else answer.append(" o");
-;           }
-            for(int j = 0; j < (mid - side - 2); j++){
-                answer.append(" ");
-            }
-            answer.append("\n");
-            side++;
+            int numSpaces = Math.abs(size - midSize);
+            answer.append(" ".repeat(numSpaces));
+            answer.append(elem);
+            answer.append(shiftElem.repeat(size - 1));
+            answer.append(" ".repeat(numSpaces));
+            answer.append('\n');
+            if(isInc)size++;
+            else size--;
         }
-        side -= 2;
-        for(int i = 0; i < counter - 2; i++){
-            for(int j = 0; j < (mid - side - 2); j++){
-                answer.append(" ");
-            }
-            for(int k = 0; k < side; k++){
-                if(k == 0)answer.append("o");
-                else answer.append(" o");
-            }
-            for(int j = 0; j < (mid - side - 2); j++){
-                answer.append(" ");
-            }
-            answer.append("\n");
-            side--;
-        }
-        return answer.toString().trim();
+        return answer.toString();
     }
 }
