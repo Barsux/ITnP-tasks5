@@ -278,7 +278,7 @@ public class Tasks5 {
             if(size == midSize){
                 isInc = false;
             }
-            int numSpaces = Math.abs(size - midSize);
+            int numSpaces = midSize - size;
             answer.append(" ".repeat(numSpaces));
             answer.append(elem);
             answer.append(shiftElem.repeat(size - 1));
